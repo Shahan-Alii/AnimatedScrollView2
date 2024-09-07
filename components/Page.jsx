@@ -7,8 +7,11 @@ import Animated, {
 } from 'react-native-reanimated';
 
 import { RadialGradient } from 'react-native-gradients';
+import { useFonts } from 'expo-font';
 
 const { height, width } = Dimensions.get('window');
+
+// importing images
 
 const images = {
     bannana: require('../assets/bannana.png'),
@@ -21,6 +24,7 @@ const images = {
     caramel1: require('../assets/caramel1.png'),
 };
 
+// fruits positions
 const positions = [
     { top: 10, left: 120, rotation: -115 },
     { top: 130, left: 240, rotation: 30 },
@@ -28,7 +32,7 @@ const positions = [
     { top: 340, left: 10, rotation: 10 },
     { top: 576, left: 20, rotation: 75 },
     { top: 490, left: 55, rotation: 90 },
-    { top: 450, left: 265, rotation: 105 },
+    { top: 510, left: 285, rotation: 105 },
     { top: 150, left: 116, rotation: 15 },
     { top: 530, left: 178, rotation: -75 },
     { top: 690, left: 200, rotation: -50 },
@@ -40,17 +44,19 @@ const Page = ({ item, index, translateX }) => {
         { offset: '100%', color: item.colors[1], opacity: '0.8' },
     ];
 
+    // input range according to translation X
     const inputRange = [
         (index - 1) * width,
         index * width,
         (index + 1) * width,
     ];
 
+    // animated style for main donut image
     const rImgStyle = useAnimatedStyle(() => {
         const opacity = interpolate(
             translateX.value,
             inputRange,
-            [-2.5, 1, -2.5],
+            [-1, 1, -1],
             Extrapolate.CLAMP
         );
         const rotate = interpolate(
@@ -63,14 +69,14 @@ const Page = ({ item, index, translateX }) => {
         const translateXImg = interpolate(
             translateX.value,
             inputRange,
-            [width * 0.5 - 120, 0, width * 1.7],
+            [width * 0 - 40, 0, width * 1.7 + 100],
             Extrapolate.CLAMP
         );
 
         const translateYImg = interpolate(
             translateX.value,
             inputRange,
-            [height * 1.9, 0, -height * 1.2],
+            [height * 1.2, 0, -height * 1.2],
             Extrapolate.CLAMP
         );
 
@@ -82,9 +88,10 @@ const Page = ({ item, index, translateX }) => {
                 { translateY: translateYImg },
                 { rotate: `${rotate}deg` },
             ],
-            zIndex: 2,
         };
     });
+
+    // animated style for Name of donut flavor
 
     const rTextStyle = useAnimatedStyle(() => {
         const opacity = interpolate(
@@ -108,10 +115,11 @@ const Page = ({ item, index, translateX }) => {
 
         return {
             opacity,
-            transform: [{ translateY }, { scaleY: 2.5 }],
+            transform: [{ translateY }, { scaleY: 2.9 }],
         };
     });
 
+    // animated style for fruits
     const rFruits = useAnimatedStyle(() => {
         const opacity = interpolate(
             translateX.value,
@@ -131,9 +139,28 @@ const Page = ({ item, index, translateX }) => {
         };
     });
 
+    // animated style for gradient bg
+
+    const rGradientStyle = useAnimatedStyle(() => {
+        const opacity = interpolate(
+            translateX.value,
+            inputRange,
+            [0.3, 1, 0.3],
+            Extrapolate.CLAMP
+        );
+
+        return {
+            opacity,
+            zIndex: -1,
+        };
+    });
+
     return (
         <View style={[styles.container]}>
-            <View style={[styles.gradientBg]}>
+            <Animated.View
+                style={[styles.gradientBg, rGradientStyle]}
+                pointerEvents="none"
+            >
                 <RadialGradient
                     x="50%"
                     y="50%"
@@ -141,7 +168,7 @@ const Page = ({ item, index, translateX }) => {
                     ry="25%"
                     colorList={colorList}
                 />
-            </View>
+            </Animated.View>
 
             <View style={styles.fruitsContainer}>
                 {Array(10)
@@ -197,6 +224,7 @@ const styles = StyleSheet.create({
     img: {
         height: 250,
         width: 250,
+        position: 'absolute',
     },
     textContainer: {
         alignItems: 'center',
@@ -210,7 +238,7 @@ const styles = StyleSheet.create({
         fontSize: 48,
         fontWeight: '900',
         position: 'absolute',
-        top: 0,
+        top: 15,
         color: 'white',
         textShadowColor: 'black',
         textShadowOffset: { width: 0, height: 0 },
@@ -219,18 +247,14 @@ const styles = StyleSheet.create({
     fruitsContainer: {
         height: height,
         width: width,
-        position: 'absolute',
     },
     fruits: {
         height: 60,
         width: 60,
-        position: 'relative',
-        zIndex: 10,
     },
     gradientBg: {
         position: 'absolute',
         width: width,
         height: height,
-        zIndex: -2,
     },
 });

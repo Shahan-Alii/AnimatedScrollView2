@@ -12,7 +12,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue } from 'react-native-reanimated';
 import Page from './components/Page';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Font } from 'expo';
 
 const { width } = Dimensions.get('window');
 
